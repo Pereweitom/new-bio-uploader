@@ -74,7 +74,7 @@ CMD ["npm", "start"]
 ```env
 NODE_ENV=production
 DATABASE_URL_LIVE=mysql://user:pass@prod-host:3306/db
-JWT_SECRET=super-strong-secret-for-production
+JWT_SECRET=tomere_super_strong_secret
 BATCH_SIZE=1000
 MAX_FILE_SIZE_BYTES=209715200
 ```

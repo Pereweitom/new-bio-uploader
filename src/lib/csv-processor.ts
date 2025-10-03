@@ -127,7 +127,7 @@ export class CsvProcessor {
     
     return new Promise((resolve, reject) => {
       const stream = fs.createReadStream(filePath);
-      let batch: CsvStudentRecord[] = [];
+      const batch: CsvStudentRecord[] = [];
       let rowNumber = 0;
       let headerProcessed = false;
 
