@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Student Biodata Uploader
 
-## Getting Started
+A Next.js 14 full-stack web application for bulk uploading student biodata from CSV files with MySQL integration, authentication, and real-time progress tracking.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Bulk CSV Upload**: Process large CSV files with student biodata (up to 200MB)
+- **Real-time Progress**: Server-Sent Events (SSE) for live progress updates
+- **Batch Processing**: Configurable batch sizes for optimal performance
+- **Data Validation**: Comprehensive validation with detailed error reporting
+- **Failed Records Management**: Download CSV of failed records for correction
+- **Dry Run Mode**: Validate data without inserting into database
+- **Authentication**: JWT-based authentication for staff users
+- **Database Integration**: MySQL with proper foreign key lookups
+- **Password Security**: bcrypt hashing for user passwords
+
+## Quick Start
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment**
+
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your database and JWT settings
+   ```
+
+3. **Set up database**
+
+   - Create MySQL database with required tables (see Database Schema)
+   - Add sample lookup data (marital status, sessions, courses, states/LGAs)
+   - Create staff user for authentication
+
+4. **Start development server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Access application**
+   Open [http://localhost:3000](http://localhost:3000) and login with staff credentials
+
+## Architecture
+
+- **Frontend**: Next.js 14 App Router, TypeScript, Tailwind CSS
+- **Backend**: Next.js API Routes with streaming
+- **Database**: MySQL with connection pooling
+- **Authentication**: JWT tokens
+- **File Processing**: Streaming CSV parser with batch operations
+
+## CSV Format
+
+Required columns: Matric Number, Last Name, First Name, Gender, DoB, Year Of Entry, Department
+
+Sample CSV:
+
+```csv
+Matric Number,Last Name,First Name,Gender,DoB,Year Of Entry,Department
+DLC/2023/001,Doe,John,Male,1995-05-15,2023,Computer Science
+DLC/2023/002,Smith,Jane,Female,1996-03-20,2023,Mathematics
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Key tables required:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `dlc_student` - Main student records
+- `dlc_student_id` - Matric number mapping
+- `dlc_marital_status` - Marital status lookup
+- `dlc_session` - Academic sessions
+- `dlc_course_of_study` - Departments/courses
+- `dlc_state` - Nigerian states
+- `dlc_lga` - Local government areas
+- `staff_users` - Authentication
 
-## Learn More
+## Deployment Notes
 
-To learn more about Next.js, take a look at the following resources:
+⚠️ **Important**: Vercel serverless functions have timeout limitations unsuitable for large batch processing.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Recommended**: Deploy frontend to Vercel, backend API to long-running Node.js host (Railway, Render, DigitalOcean).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Endpoints
 
-## Deploy on Vercel
+- `POST /api/auth` - Staff login
+- `POST /api/upload` - Upload CSV file
+- `GET /api/progress?jobId=<id>` - Progress updates (SSE)
+- `POST /api/cancel` - Cancel job
+- `GET /api/download-errors?jobId=<id>` - Download failed records
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev    # Start development server
+npm run build  # Build for production
+npm run start  # Start production server
+npm run lint   # Run ESLint
+```
+
+For detailed documentation, database schema, and deployment instructions, see the full README sections above.
