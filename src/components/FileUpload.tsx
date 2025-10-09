@@ -137,26 +137,90 @@ export default function FileUpload({ onUploadStart }: FileUploadProps) {
         return;
       }
 
+      // First test if API is reachable
+      console.log("🏥 Testing API health...");
+      try {
+        const healthResponse = await fetch("/api/health");
+        console.log("🏥 Health check:", {
+          status: healthResponse.status,
+          ok: healthResponse.ok
+        });
+      } catch (healthError) {
+        console.error("❌ API health check failed:", healthError);
+      }
+
+      console.log("📡 Making upload request to /api/upload...");
+      console.log("📦 FormData details:", {
+        fileName: selectedFile.name,
+        fileSize: selectedFile.size,
+        dryRun,
+        batchSize
+      });
+      
+      // Add timeout to catch hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+        console.error("❌ Request timed out after 60 seconds");
+      }, 60000); // 60 second timeout
+      
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
         body: formData,
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+
+      console.log("📡 Upload response received:", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+        console.log("📊 Response data:", data);
+      } catch (jsonError) {
+        console.error("❌ Failed to parse response as JSON:", jsonError);
+        setError(`Server returned invalid response. Status: ${response.status}`);
+        return;
+      }
 
       if (!response.ok) {
-        setError(data.error || "Upload failed");
+        console.error("❌ Upload request failed:", {
+          status: response.status,
+          error: data.error,
+          details: data.details
+        });
+        setError(data.error || `Upload failed with status ${response.status}`);
         return;
       }
 
       console.log(`📤 FileUpload received response:`, data);
       console.log(`🆔 Starting job with ID: ${data.jobId}`);
       onUploadStart(data.jobId);
-    } catch {
-      setError("Network error during upload");
+    } catch (error) {
+      console.error("❌ Network/fetch error during upload:", error);
+      
+      let errorMessage = 'Unknown error';
+      
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = 'Request timed out. Please try again with a smaller file.';
+        } else if (error.message.includes('fetch')) {
+          errorMessage = `Network error: ${error.message}`;
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(`Upload failed: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
