@@ -5,12 +5,12 @@ export async function GET() {
   try {
     // Get all staff users (without passwords)
     const users = await executeQuery(
-      'SELECT id, first_name, last_name, email, role, status, created_at FROM staff ORDER BY created_at DESC'
+      'SELECT id, name, email, role, created_at FROM staff_users ORDER BY created_at DESC'
     );
 
     // Count users by role
     const roleCount = await executeQuery(
-      'SELECT role, COUNT(*) as count FROM staff GROUP BY role'
+      'SELECT role, COUNT(*) as count FROM staff_users GROUP BY role'
     );
 
     return NextResponse.json({

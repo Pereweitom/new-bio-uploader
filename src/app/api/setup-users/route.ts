@@ -6,7 +6,7 @@ export async function POST() {
   try {
     // Check if any staff users exist
     const existingUsers = await executeQuery(
-      'SELECT COUNT(*) as count FROM staff'
+      'SELECT COUNT(*) as count FROM staff_users'
     );
     
     const userCount = (existingUsers[0] as any).count;
@@ -42,9 +42,9 @@ export async function POST() {
       const hashedPassword = await AuthService.hashPassword(user.password);
       
       await executeQuery(
-        `INSERT INTO staff (first_name, last_name, email, password_hash, role, status, created_at) 
-         VALUES (?, ?, ?, ?, ?, 'active', NOW())`,
-        [user.firstName, user.lastName, user.email, hashedPassword, user.role]
+        `INSERT INTO staff_users (name, email, password_hash, role, created_at) 
+         VALUES (?, ?, ?, ?, NOW())`,
+        [`${user.firstName} ${user.lastName}`, user.email, hashedPassword, user.role]
       );
       
       createdCount++;
