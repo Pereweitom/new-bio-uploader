@@ -37,13 +37,16 @@ export async function POST() {
       }
     ];
 
+    // First, delete existing users to recreate with fresh hashes
+    await executeQuery('DELETE FROM staff_users');
+
     let createdCount = 0;
     for (const user of defaultUsers) {
       const hashedPassword = await AuthService.hashPassword(user.password);
       
       await executeQuery(
-        `INSERT INTO staff_users (name, email, password_hash, role, created_at) 
-         VALUES (?, ?, ?, ?, NOW())`,
+        `INSERT INTO staff_users (name, email, password_hash, role, active, created_at) 
+         VALUES (?, ?, ?, ?, 1, NOW())`,
         [`${user.firstName} ${user.lastName}`, user.email, hashedPassword, user.role]
       );
       
