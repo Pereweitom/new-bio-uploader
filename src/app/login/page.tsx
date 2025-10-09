@@ -36,8 +36,21 @@ export default function LoginPage() {
       }
 
       // Store token and user info
+      console.log('🔑 Login successful, storing token:', {
+        hasToken: !!data.token,
+        tokenPreview: data.token ? data.token.substring(0, 20) + '...' : 'null',
+        user: data.user?.email
+      });
+      
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      
+      // Verify token was stored
+      const storedToken = localStorage.getItem("token");
+      console.log('🔑 Token verification after storage:', {
+        stored: !!storedToken,
+        matches: storedToken === data.token
+      });
 
       // Redirect to dashboard
       router.push("/dashboard");

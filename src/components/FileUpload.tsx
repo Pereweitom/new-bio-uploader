@@ -124,6 +124,18 @@ export default function FileUpload({ onUploadStart }: FileUploadProps) {
       formData.append("batchSize", batchSize.toString());
 
       const token = localStorage.getItem("token");
+      console.log('🔑 Upload token check:', {
+        hasToken: !!token,
+        tokenPreview: token ? token.substring(0, 20) + '...' : 'null',
+        localStorage: typeof localStorage !== 'undefined' ? 'available' : 'unavailable'
+      });
+      
+      if (!token) {
+        setError("No authentication token found. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: {

@@ -73,6 +73,14 @@ export class AuthService {
    */
   static async verifyToken(token: string): Promise<User | null> {
     try {
+      console.log('🔍 Verifying token:', {
+        hasToken: !!token,
+        tokenLength: token?.length,
+        hasSecret: !!this.JWT_SECRET,
+        secretPreview: this.JWT_SECRET?.substring(0, 10) + '...',
+        isDefaultSecret: this.JWT_SECRET === 'fallback-secret-change-in-production'
+      });
+      
       const decoded = jwt.verify(token, this.JWT_SECRET) as any;
       
       // Optionally re-query user to ensure they're still active
@@ -142,7 +150,16 @@ export function withAuth(handler: (req: any, user: User) => Promise<any>) {
       const authHeader = req.headers.get('authorization');
       const token = AuthService.extractTokenFromHeader(authHeader);
       
+      console.log('🔐 Auth middleware check:', {
+        hasAuthHeader: !!authHeader,
+        authHeaderPreview: authHeader?.substring(0, 20) + '...',
+        hasToken: !!token,
+        url: req.url,
+        method: req.method
+      });
+      
       if (!token) {
+        console.error('❌ No token provided in request');
         return new Response(JSON.stringify({ error: 'No token provided' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json' }
@@ -152,12 +169,14 @@ export function withAuth(handler: (req: any, user: User) => Promise<any>) {
       const user = await AuthService.verifyToken(token);
       
       if (!user) {
+        console.error('❌ Invalid token provided');
         return new Response(JSON.stringify({ error: 'Invalid token' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json' }
         });
       }
 
+      console.log('✅ Auth successful for user:', user.email);
       // Call the protected handler with user info
       return handler(req, user);
     } catch (error) {
