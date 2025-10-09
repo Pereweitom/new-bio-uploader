@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 
 async function testPasswordVerification() {
   try {
-    const dbUrl = "mysql://root:@localhost:3306/dlc_ui";
+    const dbUrl =
+      "mysql://webmaster:IsaSamLelSam2024.@3.211.213.139:3306/dlc_ui";
     const connection = await mysql.createConnection(dbUrl);
 
     const email = "staff@bioUploader.com";
