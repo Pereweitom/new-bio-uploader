@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
 import Papa from 'papaparse';
 import { withAuth } from '@/lib/auth';
 import { CsvStudentRecord } from '@/lib/types';
 
-export const POST = withAuth(async (request: NextRequest, user) => {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const formData = await request.formData();
     const file = formData.get('csvFile') as File;
@@ -80,7 +77,7 @@ export const POST = withAuth(async (request: NextRequest, user) => {
       
       // Check required fields
       requiredFields.forEach(field => {
-        const value = (row as any)[field];
+        const value = row[field as keyof CsvStudentRecord];
         if (!value || !value.toString().trim()) {
           errors.push(`Missing ${field}`);
         }

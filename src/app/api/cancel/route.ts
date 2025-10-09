@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { JobManager } from '@/lib/job-manager';
 import { withAuth } from '@/lib/auth';
 
-export const POST = withAuth(async (request: NextRequest, user) => {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
     const { jobId } = body;

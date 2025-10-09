@@ -22,7 +22,7 @@ interface JobProgress {
 }
 
 export default function JobSummary({ jobId, onNewUpload }: JobSummaryProps) {
-  const [progress, setProgress] = useState<JobProgress | null>(null);
+  const [progress] = useState<JobProgress | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

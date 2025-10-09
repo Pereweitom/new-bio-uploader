@@ -16,7 +16,6 @@ interface User {
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +30,7 @@ export default function DashboardPage() {
 
     try {
       setUser(JSON.parse(userData));
-    } catch (error) {
+    } catch {
       console.error("Invalid user data");
       router.push("/login");
     }
@@ -46,16 +45,14 @@ export default function DashboardPage() {
   const handleUploadStart = (jobId: string) => {
     console.log(`🆔 Dashboard received job ID: ${jobId}`);
     setCurrentJobId(jobId);
-    setIsProcessing(true);
   };
 
   const handleJobComplete = () => {
-    setIsProcessing(false);
+    // Job completed
   };
 
   const handleNewUpload = () => {
     setCurrentJobId(null);
-    setIsProcessing(false);
   };
 
   if (!user) {

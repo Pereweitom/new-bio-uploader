@@ -5,7 +5,7 @@ import path from 'path';
 import { withAuth } from '@/lib/auth';
 import { JobManager } from '@/lib/job-manager';
 
-export const POST = withAuth(async (request: NextRequest, user) => {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const formData = await request.formData();
     const file = formData.get('csvFile') as File;

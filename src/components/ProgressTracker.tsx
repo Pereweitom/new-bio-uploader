@@ -28,7 +28,6 @@ export default function ProgressTracker({
   const [progress, setProgress] = useState<JobProgress | null>(null);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string>("");
-  const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
   useEffect(() => {
     if (!jobId) return;
@@ -37,7 +36,6 @@ export default function ProgressTracker({
 
     // Create EventSource for SSE
     const es = new EventSource(`/api/progress?jobId=${jobId}`);
-    setEventSource(es);
 
     es.onopen = () => {
       console.log(`✅ ProgressTracker connected to SSE for job: ${jobId}`);
@@ -88,7 +86,7 @@ export default function ProgressTracker({
       }
     };
 
-    es.onerror = (event) => {
+    es.onerror = () => {
       setError("Connection lost. Retrying...");
       setConnected(false);
     };
@@ -116,7 +114,7 @@ export default function ProgressTracker({
       if (!response.ok) {
         throw new Error("Failed to cancel job");
       }
-    } catch (error) {
+    } catch {
       setError("Failed to cancel job");
     }
   };
@@ -147,11 +145,11 @@ export default function ProgressTracker({
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } else {
-        const error = await response.json();
-        setError(`Download failed: ${error.error}`);
+        const errorData = await response.json();
+        setError(`Download failed: ${errorData.error}`);
       }
-    } catch (error) {
-      console.error("Download failed:", error);
+    } catch {
+      console.error("Download failed");
       setError("Download failed. Please try again.");
     }
   };

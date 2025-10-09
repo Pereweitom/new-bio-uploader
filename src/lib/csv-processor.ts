@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import path from 'path';
 import { executeTransaction } from './database';
@@ -113,7 +112,7 @@ export class CsvProcessor {
     try {
       await this.countTotalRecords(filePath);
       console.log(`📊 Actual total records counted: ${this.progress.totalRecords}`);
-    } catch (error) {
+    } catch {
       console.error('Failed to count records, using dynamic counting');
       this.progress.totalRecords = 0; // Will be updated as we process
     }
@@ -213,7 +212,7 @@ export class CsvProcessor {
             reject(error);
           }
         },
-        error: (error: any) => {
+        error: (error: Error) => {
           reject(new Error(`CSV parsing failed: ${error.message}`));
         }
       });

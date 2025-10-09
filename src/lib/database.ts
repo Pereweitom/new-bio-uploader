@@ -57,9 +57,9 @@ export async function testConnection(): Promise<boolean> {
 }
 
 // Prepared statement helpers
-export async function executeQuery<T = any>(
+export async function executeQuery<T = unknown>(
   query: string, 
-  params: any[] = []
+  params: unknown[] = []
 ): Promise<T[]> {
   try {
     const [rows] = await db.execute(query, params);

@@ -89,7 +89,7 @@ export class AuthService {
         name: users[0].name,
         role: users[0].role
       };
-    } catch (error) {
+    } catch {
       return null;
     }
   }

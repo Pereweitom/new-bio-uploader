@@ -17,7 +17,7 @@ interface DryRunResult {
   };
   preview: Array<{
     rowNumber: number;
-    data: any;
+    data: Record<string, string>;
     errors: string[];
     isValid: boolean;
   }>;
@@ -104,7 +104,7 @@ export default function FileUpload({ onUploadStart }: FileUploadProps) {
       }
 
       setDryRunResult(data);
-    } catch (error) {
+    } catch {
       setError("Network error during dry run");
     } finally {
       setLoading(false);
@@ -142,7 +142,7 @@ export default function FileUpload({ onUploadStart }: FileUploadProps) {
       console.log(`📤 FileUpload received response:`, data);
       console.log(`🆔 Starting job with ID: ${data.jobId}`);
       onUploadStart(data.jobId);
-    } catch (error) {
+    } catch {
       setError("Network error during upload");
     } finally {
       setLoading(false);

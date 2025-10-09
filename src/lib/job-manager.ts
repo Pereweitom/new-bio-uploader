@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 import { JobProgress } from './types';
 import { CsvProcessor } from './csv-processor';
 
@@ -17,7 +18,7 @@ export class JobManager {
   /**
    * Create a new processing job
    */
-  static createJob(options: any = {}): Job {
+  static createJob(options: Record<string, unknown> = {}): Job {
     const jobId = uuidv4();
     console.log(`🆔 Creating job with ID: ${jobId}`);
     
@@ -101,7 +102,6 @@ export class JobManager {
     if (job && job.completedAt) {
       // Clean up temp files
       try {
-        const fs = require('fs');
         const failedCsvPath = job.processor.getFailedCsvPath();
         if (fs.existsSync(failedCsvPath)) {
           fs.unlinkSync(failedCsvPath);

@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 import { JobManager } from '@/lib/job-manager';
 import { withAuth } from '@/lib/auth';
 
-export const GET = withAuth(async (request: NextRequest, user) => {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const jobId = searchParams.get('jobId');
@@ -31,7 +31,7 @@ export const GET = withAuth(async (request: NextRequest, user) => {
     const fileName = `failed_records_${jobId}.csv`;
 
     // Return file as download
-    return new NextResponse(fileBuffer as any, {
+    return new NextResponse(fileBuffer.buffer as ArrayBuffer, {
       headers: {
         'Content-Type': 'text/csv',
         'Content-Disposition': `attachment; filename="${fileName}"`,
