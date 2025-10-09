@@ -7,6 +7,8 @@ import { JobManager } from '@/lib/job-manager';
 import { testConnection } from '@/lib/database';
 
 export const POST = withAuth(async (request: NextRequest) => {
+  console.log('🎯 UPLOAD API CALLED - Starting upload process');
+  
   try {
     console.log('🚀 Upload API started');
     console.log('🌍 Environment info:', {
@@ -16,7 +18,8 @@ export const POST = withAuth(async (request: NextRequest) => {
       hasDbUrlLive: !!process.env.DATABASE_URL_LIVE,
       hasDbUrlLocal: !!process.env.DATABASE_URL_LOCAL,
       uploadDir: process.env.UPLOAD_DIR || './uploads',
-      tempDir: process.env.TEMP_DIR || './temp'
+      tempDir: process.env.TEMP_DIR || './temp',
+      jwtSecret: process.env.JWT_SECRET ? 'Present' : 'Missing'
     });
     
     // Test database connection first
