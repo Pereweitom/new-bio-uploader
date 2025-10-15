@@ -17,8 +17,6 @@ export const POST = withAuth(async (request: NextRequest) => {
       cwd: process.cwd(),
       hasDbUrlLive: !!process.env.DATABASE_URL_LIVE,
       hasDbUrlLocal: !!process.env.DATABASE_URL_LOCAL,
-      uploadDir: process.env.UPLOAD_DIR || './uploads',
-      tempDir: process.env.TEMP_DIR || './temp',
       jwtSecret: process.env.JWT_SECRET ? 'Present' : 'Missing'
     });
     
@@ -79,8 +77,8 @@ export const POST = withAuth(async (request: NextRequest) => {
 
     console.log('✅ File validation passed');
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = process.env.UPLOAD_DIR || './uploads';
+    // Create uploads directory - use system temp in production
+    const uploadsDir = process.env.UPLOAD_DIR || (process.env.NODE_ENV === 'production' ? '/tmp/uploads' : './uploads');
     console.log('📁 Checking upload directory:', uploadsDir);
     
     if (!existsSync(uploadsDir)) {

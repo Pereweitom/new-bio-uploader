@@ -52,8 +52,8 @@ export class CsvProcessor {
     // Emit initial progress immediately
     this.emitProgress();
 
-    // Create failed records CSV path
-    const tempDir = process.env.TEMP_DIR || './temp';
+    // Create failed records CSV path - use system temp in production
+    const tempDir = process.env.TEMP_DIR || (process.env.NODE_ENV === 'production' ? '/tmp/temp' : './temp');
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }
